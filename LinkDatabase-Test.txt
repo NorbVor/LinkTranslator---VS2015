@@ -1,0 +1,12 @@
+Andromeda galaxy;https://en.wikipedia.org/wiki/Andromeda_Galaxy;Andromedagalaxie;https://de.wikipedia.org/wiki/Andromedagalaxie
+Antares;http://en.wikipedia.org/wiki/Antares;Antares;https://de.wikipedia.org/wiki/Antares
+antenna;https://en.wikipedia.org/wiki/Parabolic_antenna;Antenne;https://de.wikipedia.org/wiki/Parabolantenne
+anticrepuscular rays;https://en.wikipedia.org/wiki/Anticrepuscular_rays;Gegendämmerungsstrahlen;https://de.wikipedia.org/wiki/Strahlenbüschel
+antisolar point;https://en.wikipedia.org/wiki/Antisolar_point;Sonnengegenpunkt;https://de.wikipedia.org/wiki/Sonnengegenpunkt
+asteroid belt;https://en.wikipedia.org/wiki/Asteroid_belt;Asteroidengürtel;https://de.wikipedia.org/wiki/Asteroidengürtel
+asteroid familie;https://en.wikipedia.org/wiki/Asteroid_family;Asteroidenfamilie;https://de.wikipedia.org/wiki/Asteroidenfamilie
+astrochemical;https://en.wikipedia.org/wiki/Astrochemistry;astrochemischer;https://en.wikipedia.org/wiki/Astrochemistry
+Astronomical Unit or AU;https://en.wikipedia.org/wiki/Astronomical_unit;Astronomische Einheit;https://de.wikipedia.org/wiki/Astronomische_Einheit
+Milky Way;https://en.wikipedia.org/wiki/milky_way;Michstraße;https://de.wikipedia.org/wiki/milchstraße
+Planet Jupiter;https://en.wikipedia.org/wiki/Jupiter;Planet Jupiterus;https://de.wikipedia.org/wiki/Jupiter_(Planet)
+Jupiter;https://en.wikipedia.org/wiki/Jupiter;Jupiterus;https://de.wikipedia.org/wiki/Jupiter_(Planet)
