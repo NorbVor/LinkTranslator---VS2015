@@ -234,7 +234,7 @@ namespace LinkTranslator
         private bool FindGermanWikiTopicByPageScan (Hyperlink hl, Hyperlink deHL)
         {
             XmlReaderSettings settings = new XmlReaderSettings ();
-            settings.ProhibitDtd = false;
+            settings.DtdProcessing = DtdProcessing.Parse;
             XmlReader xmlReader = XmlReader.Create (hl.uri, settings);
 
             bool langLabelSeen = false;
