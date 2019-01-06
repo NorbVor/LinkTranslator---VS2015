@@ -32,24 +32,60 @@ namespace LinkTranslator
 
             // often the clipboard data contains UTF8 encoded strings without specifying so
             if (Environment.Version.Major < 4)
-                FixMisencodedUTF8 (envString, out _envString);
+                FixMisencodedUTF8(envString, out _envString);
 
-            StringReader textReader = new StringReader (envString);
+#if false
+            if (!DecodeSectionHeader ())
+                return false;
+
+            // save the offsets found by DecodeSectionHeader
+            int saveStartHtml = _startHtml;
+            int saveEndHtlm = _endHtml;
+            int saveStartFragment = _startFragment;
+            int saveEndFragment = _endFragment;
+#endif
+            // we don't rely on the offset fields of the header, but determine our own offsets by
+            // search for the HTML-tags
+            if (!FindHtmlAndFragmentOffsets())
+                return false;
+
+#if false
+            DebugPrintOffsetDiscrepancies(saveStartHtml, saveEndHtlm, saveStartFragment, saveEndFragment);
+#endif
+            return true;
+        }
+
+        // find the HTML and fragment start/end by searching for the HTML tags
+        private bool FindHtmlAndFragmentOffsets()
+        {
+            _startHtml = GetStartOfTagText(_envString, "html");
+            _startFragment = GetStartOfTagText(_envString, "body");
+            _endFragment = GetEndOfTagText(_envString, "body");
+            _endHtml = GetEndOfTagText(_envString, "html");
+            if (!(_startHtml >= 0 &&_startHtml < _startFragment && _startFragment <= _endFragment && _endFragment < _endHtml))
+                return false;
+            return true;
+        }
+
+        // decode the header section
+        private bool DecodeSectionHeader ()
+        {
+            StringReader textReader = new StringReader(_envString);
             string line;
-            while ((line = textReader.ReadLine ()) != null)
+            while ((line = textReader.ReadLine()) != null)
             {
                 // if line starts with '<' as first non-blank charcter, we have
                 // consumend the entire header
-                if (line.Trim ().StartsWith ("<"))
+                if (line.Trim().StartsWith("<"))
                     break;
 
                 // parse the line according to the scheme: label:value
-                string[] comps = line.Split (':');
-                string label = comps[0].ToLower ();
+                string[] comps = line.Split(':');
+                string label = comps[0].ToLower();
                 int idx;
                 int value = -1;
-                if ((idx = Array.IndexOf (_labels, label)) >= 0)
-                    value = int.Parse (comps[1]);
+                if ((idx = Array.IndexOf(_labels, label)) >= 0)
+                    value = int.Parse(comps[1]);
 
                 // interpret the label and put the value into the according member
                 switch (idx)
@@ -62,23 +98,29 @@ namespace LinkTranslator
             }
             if (_startHtml < 0 || _endHtml < 0 || _startFragment < 0 || _endFragment < 0)
                 return false;
-
-            // fix _endHtml, because it OpenOffice sometimes puts it too hight by 1
-            if (_endHtml > envString.Length)
-                _endHtml = envString.Length;
+            if (!(_startHtml < _startFragment && _startFragment <= _endFragment && _endFragment < _endHtml))
+                return false;
 
             // fix the offsets, because they referred to the UTF-8 encoding
-            if (Environment.Version.Major < 4 && envString.Length != _envString.Length)
-            {
-                byte[] data = Encoding.Default.GetBytes (envString);
-                _startHtml      = FixUtf8Offset (data, _startHtml);
-                _endHtml        = FixUtf8Offset (data, _endHtml);
-                _startFragment  = FixUtf8Offset (data, _startFragment);
-                _endFragment    = FixUtf8Offset (data, _endFragment);
-            }
-
-            return true;
+            return FixEnvelopeOffsets();
         }
+
+        private int GetStartOfTagText (string html, string tag)
+        {
+            int startOfTag = html.IndexOf("<" + tag, 0, StringComparison.CurrentCultureIgnoreCase);
+            if (startOfTag < 0)
+                return startOfTag;
+            int endOfTag = html.IndexOf(">", startOfTag);
+            if (endOfTag < 0)
+                return endOfTag;
+            return endOfTag + 1;
+        }
+
+        private int GetEndOfTagText (string html, string tag)
+        {
+            return html.IndexOf("</" + tag, 0, StringComparison.CurrentCultureIgnoreCase);
+        }
+
 
         public string GetHtmlString ()
         {
@@ -165,7 +207,128 @@ namespace LinkTranslator
             if (v != offset)
                 System.Console.WriteLine ("Offset {0} fixed to {1}", offset, v);
 #endif
-            return v;
+            return v;          
         }
-     }
+
+        /// <summary>
+        /// The envelope header fields (_startHtml, ...) contain offsets into the original UTF8 string
+        /// which the framework has already converted for us into a UTF16 string. But the framework didn't fix
+        /// the header fields accordingly. So we must correct them as all 2- and 3-bytes sequences in UTF8 have
+        /// become a single UTF16 character in our new string.
+        /// </summary>
+        private bool FixEnvelopeOffsets ()
+        {
+            // as a precaution we check that all entries are within the UTF8 string boundaries
+            int utf8Length = Encoding.UTF8.GetByteCount(_envString);
+            if (_startHtml >= utf8Length || _endHtml > utf8Length ||
+                _startFragment >= utf8Length || _endFragment >= utf8Length)
+                    return false;
+
+            // if utf8Length is the same as our UTF16 string length the string did not contain 
+            // any 2- or 3-byte sequences, so we are done
+            if (utf8Length == _envString.Length)
+                return true; 
+
+            // convert the UTF8 index values segment by segment
+            int i1 = ConvUtf8IdxToUtf16Idx(_envString, 0, 0, _startHtml);
+            int i2 = ConvUtf8IdxToUtf16Idx(_envString, _startHtml, i1, _startFragment);
+            int i3 = ConvUtf8IdxToUtf16Idx(_envString, _startFragment, i2, _endFragment);
+            int i4 = ConvUtf8IdxToUtf16Idx(_envString, _endFragment, i3, _endHtml);
+
+            _startHtml = i1;
+            _startFragment = i2;
+            _endFragment = i3;
+            _endHtml = i4;
+
+            return true;
+        }
+
+        int ConvUtf8IdxToUtf16Idx (string s, int fromUtf8Idx, int fromUtf16Idx, int toUtf8Idx)
+        {
+            int utf16Idx = fromUtf16Idx;
+            for (int utf8idx = fromUtf8Idx; utf8idx < toUtf8Idx;)
+            {
+                char c = s[utf16Idx++];
+                int utf8Length = (c & ~0x7f) == 0 ? 1 : (c & ~0x7ff) == 0 ? 2 : 3;
+                utf8idx += utf8Length;
+            }
+            return utf16Idx;
+        }
+
+        /*
+        ******************************** Debugging Helpers ************************
+        */
+#if DEBUG
+        private void DebugPrintOffsetDiscrepancies (int saveStartHtml, int saveEndHtml, int saveStartFragment, int saveEndFragment)
+        {
+            Console.WriteLine("Discrepancies between offsets from header fields and text search:");
+            Console.WriteLine("StartFragment discrepancy {0}", _startFragment - saveStartFragment);
+            Console.WriteLine("EndFragment discrepancy   {0}", _endFragment - saveEndFragment);
+
+            DebugPrintOffset("startHtlm", _startHtml, saveStartHtml);
+            DebugPrintOffset("startFragment", _startFragment, saveStartFragment);
+            DebugPrintOffset("endFragment", _endFragment, saveEndFragment);
+            DebugPrintOffset("endHtlm", _endHtml, saveEndHtml);
+        }
+
+        private void DebugPrintOffset (string name, int offsetA, int offsetB)
+        {
+            System.Console.WriteLine(name + ":");
+            int startIdx = Math.Min(offsetA, offsetB) - 5;
+            startIdx = Math.Max(startIdx, 0);
+            int limIdx = Math.Max(offsetA, offsetB) + 5;
+            limIdx = Math.Min(limIdx, _envString.Length);
+
+            DumpString(_envString, startIdx, limIdx);
+
+            System.Console.Write("    ");
+            int marker1 = offsetA;
+            int marker2 = offsetB;
+            char c1 = 'A';
+            char c2 = 'B';
+            if (offsetB < offsetA)
+            {
+                marker1 = offsetB;
+                marker2 = offsetA;
+                c1 = 'B';
+                c2 = 'A';
+            } else if (offsetA == offsetB)
+            {
+                c1 = '|';
+            }
+
+            int idx = startIdx;
+            for (; idx < marker1; ++idx)
+                System.Console.Write("   ");
+            System.Console.Write(" {0}  ", c1);
+            ++idx;
+            if (offsetA != offsetB)
+            {
+                for (; idx < marker2; ++idx)
+                    System.Console.Write("   ");
+                System.Console.Write(" {0}  ", c2);
+            }
+            System.Console.WriteLine("");
+            System.Console.WriteLine("");
+        }
+
+        private void DumpString(string s, int startIdx, int endIdx)
+        {
+            System.Console.Write("    ");
+            for (int idx = startIdx; idx < endIdx; ++idx)
+                System.Console.Write(Convert.ToInt16(s[idx]).ToString("X2") + " ");
+            System.Console.WriteLine("");
+
+            System.Console.Write("    ");
+            for (int idx = startIdx; idx < endIdx; ++idx)
+            {
+                if (char.IsControl(s[idx]))
+                    System.Console.Write(" . ");
+                else
+                    System.Console.Write(" " + s[idx] + " ");
+            }
+            System.Console.WriteLine("");
+        }
+#endif
+    }
 }
