@@ -62,7 +62,7 @@ namespace LinkTranslator
                     transHL = (Hyperlink) hl.Clone ();
                     transHL.transStatus = Hyperlink.TranslationStatus.eso; 
                 }
-                else if (uri.Authority == "en.wikipedia.org")
+                else if (uri.Authority == "en.wikipedia.org" || uri.Authority == "wikipedia.org")
                     transHL = TranslateWikipedialLink (hl);
                 else
                 {
