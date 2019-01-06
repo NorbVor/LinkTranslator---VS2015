@@ -6,6 +6,7 @@ using System.Xml;
 using System.IO;
 using System.Collections;
 using Ionic.Zip;
+using System.Windows.Forms;
 
 namespace LinkTranslator
 {
@@ -39,26 +40,43 @@ namespace LinkTranslator
         /// <returns>True upon success</returns>
         public bool Read (string filePath)
         {
-            _filepath = filePath;
-            using (ZipFile zip = ZipFile.Read (_filepath))
+            bool retry = false;
+            do
             {
-                // read the content.xml file inside the zip archive into _memStream
-                ZipEntry contentZip = zip["content.xml"];
-                MemoryStream memStream = new MemoryStream (50000);
-                contentZip.Extract (memStream);
+                try
+                {
+                    retry = false;
+                    _filepath = filePath;
+                    using (ZipFile zip = ZipFile.Read(_filepath))
+                    {
+                        // read the content.xml file inside the zip archive into _memStream
+                        ZipEntry contentZip = zip["content.xml"];
+                        MemoryStream memStream = new MemoryStream(50000);
+                        contentZip.Extract(memStream);
 
-                // convert _memString into a string
-                memStream.Seek (0, SeekOrigin.Begin);
-                int count;
-                byte[] byteArray;
-                byteArray = new byte[memStream.Length];
-                count = memStream.Read (byteArray, 0, (int)memStream.Length);
-                String s = Encoding.UTF8.GetString (byteArray);
+                        // convert _memString into a string
+                        memStream.Seek(0, SeekOrigin.Begin);
+                        int count;
+                        byte[] byteArray;
+                        byteArray = new byte[memStream.Length];
+                        count = memStream.Read(byteArray, 0, (int)memStream.Length);
+                        String s = Encoding.UTF8.GetString(byteArray);
 
-                // load that string into an XmlDocument object
-                _doc = new XmlDocument ();
-                _doc.LoadXml (s);
-            }
+                        // load that string into an XmlDocument object
+                        _doc = new XmlDocument();
+                        _doc.LoadXml(s);
+                    }
+                }
+                catch
+                {
+                    DialogResult res = MessageBox.Show($"Error: File {filePath} could not be opened",
+                        "File Open Error", MessageBoxButtons.RetryCancel);
+                    if (res == DialogResult.Retry)
+                        retry = true;
+                    else
+                        return false;
+                }
+            } while (retry);
             return true;
         }
 
