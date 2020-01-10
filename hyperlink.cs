@@ -20,10 +20,14 @@ namespace LinkTranslator
         public string text = "";
         public string uri = "";
 
-        public string transMethod = "";
+        public string transMethodText = "";
+        public string transMethodUrl = "";
         public TranslationStatus transStatus = TranslationStatus.notrans;
         public enum TranslationStatus { notrans, partial, full, eso };
         static readonly string[] msgs = { "(\u2013)", "(P)", "(F)", "(ESO)" };
+
+        public bool uriChanged = false;
+        public bool textChanged = false;
 
         /// <summary>
         /// Returns a string showing the translation status of the hyperlink.

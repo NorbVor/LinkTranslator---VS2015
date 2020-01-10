@@ -4,6 +4,9 @@ using System.Text;
 using System.IO;
 using System.Windows.Forms;
 using System.Xml;
+using System.Linq;
+using LinkTranslator.Properties;
+using System.Net;
 
 namespace LinkTranslator
 {
@@ -21,8 +24,15 @@ namespace LinkTranslator
     /// </summary>
     class LinkTranslator
     {
+#if false
         // in-memory representation of the XML-Database of link translations
         private Dictionary<string, TransElem> _topicDict;
+#endif
+        // new dictornary structure:
+        private Dictionary<string, string> _urlDict;
+        private Dictionary<string, string> _textDict;
+        private const string _fileNameUrlDB = "TransUrlDb.txt";
+        private const string _fileNameTextDB = "TransTextDb.txt";
 
         /// <summary>
         /// As part of the constructor, we read the XML-file with our translation database
@@ -30,10 +40,26 @@ namespace LinkTranslator
         /// </summary>
         public LinkTranslator ()
         {
+#if false
             _topicDict = new Dictionary<string, TransElem>();
             ReadLinkDatabaseXml ("LinkDatabase.xml");
+#endif
+            // new dictonary: load the dictionaries
+            ReloadDatabase();
+
+            // preparation for the new database that uses two text files for links and text representation
+            //GenLinkUrlTransTable("LinkDb.txt");
+            //GenLinkTextTransTable("TextDb.txt");
         }
 
+        public void ReloadDatabase ()
+        {
+            if (!LoadUrlDatabase(_fileNameUrlDB))
+                MessageBox.Show($"Could not find the URL translation database file {_fileNameUrlDB}", "File not found", MessageBoxButtons.OK);
+            if (!LoadTextDatabase(_fileNameTextDB))
+                MessageBox.Show($"Could not find the text translation database file {_fileNameTextDB}", "File not found", MessageBoxButtons.OK);
+        }
+#if false
         /// <summary>
         /// Loops over all links in the input list and tries to translate them. The translated
         /// links are returned in the output list. Untranslated links are just copied to the
@@ -74,7 +100,188 @@ namespace LinkTranslator
                 transLinks.Add (transHL);
             }
         }
+#endif
 
+        public void TranslateLinks2(List<Hyperlink> links, List<Hyperlink> transLinks)
+        {
+            foreach (Hyperlink hl in links)
+                transLinks.Add(TranslateLink2(hl));
+        }
+
+        public void ReTranslateESOLinks(List<Hyperlink> links, List<Hyperlink> transLinks)
+        {
+            for (int idx = 0; idx < links.Count; ++idx)
+            {
+                if (transLinks[idx].transMethodUrl == "ESO")
+                     TranslateESOLink(links[idx], transLinks[idx]);
+            }
+        }
+
+        public Hyperlink TranslateLink2(Hyperlink hl)
+        {
+            // the default is to use the original URL and text
+            Hyperlink transHL;
+            transHL = (Hyperlink)hl.Clone();
+            transHL.transMethodUrl = "none";
+            transHL.transMethodText = "none";
+
+            string authority = GetUrlAuthority(hl.uri);
+            if (authority == "www.eso.org" || authority == "eso.org")
+            {
+                TranslateESOLink(hl, transHL);
+            }
+            else
+            {
+                bool isWikipediaLink = false;
+
+                // try translate by the URI / text databases
+                bool foundUri = TranslateUriByDatabase2(hl.uri, transHL, out isWikipediaLink);
+                bool foundText = TranslateTextByDatabase2(hl.text, transHL);
+
+                // for Wikipedia links we have some more means to find the link equivalent
+                if (isWikipediaLink && (!foundUri || !foundText))
+                {
+                    if (!FindGermanWikiTopicByWikidata(hl, transHL, foundUri, foundText))
+                        FindGermanWikiTopicByPageScan(hl, transHL, foundUri, foundText);
+                }
+            }
+            return transHL;
+        }
+
+        private string GetUrlAuthority (string url)
+        {
+            string urlAuthority = "";
+            try
+            {
+                Uri uri = new Uri(url);
+                urlAuthority = uri.Authority;
+            }
+            catch
+            {
+            }
+            return urlAuthority;
+        }
+
+        private void TranslateESOLink (Hyperlink hl, Hyperlink transHL)
+        {
+            transHL.transStatus = Hyperlink.TranslationStatus.eso;
+            transHL.transMethodUrl = "ESO";
+
+            // ESO URLs don't need to be translated
+            // but the text part must still be translated
+            transHL.uri = hl.uri;
+            TranslateTextByDatabase2(hl.text, transHL);
+
+            // as of Jan 2019: convert the link to an internal link by deleting
+            // the https://www.eso.org part
+            if (Settings.Default.reduceESOLinks)
+            {
+                transHL.uri = transHL.uri.Replace("https://www.eso.org", "");
+                transHL.uri = transHL.uri.Replace("http://www.eso.org", "");
+                transHL.uri = transHL.uri.Replace("http://eso.org", "");
+            }
+        }
+
+        private bool TranslateUriByDatabase2 (string uri, Hyperlink transHL, out bool isWikipediaLink)
+        {
+            isWikipediaLink = false;
+
+            string redUri = DeflateUrl(uri);
+            if (redUri.Contains("$(enWiki)"))
+                isWikipediaLink = true;
+
+            string value;
+            if (!_urlDict.TryGetValue(redUri, out value))
+                return false;
+            transHL.uri = InflateUrl(value);
+            transHL.transStatus = Hyperlink.TranslationStatus.partial;
+            transHL.transMethodUrl = "DB";
+            return true;
+        }
+
+        private bool TranslateTextByDatabase2(string text, Hyperlink transHL)
+        {
+            // throw out the punctuation that is often part of a link and that makes it
+            // unsuitable as a key. Also translate it to all lower-case.
+            text = NormalizeText(text);
+
+            string value;
+            if (!_textDict.TryGetValue(text, out value))
+                return false;
+            transHL.text = value;
+            if (transHL.transStatus == Hyperlink.TranslationStatus.notrans)
+                transHL.transStatus = Hyperlink.TranslationStatus.partial;
+            if (transHL.transStatus == Hyperlink.TranslationStatus.partial)
+                transHL.transStatus = Hyperlink.TranslationStatus.full;
+            transHL.transMethodText = "DB";
+            return true;
+        }
+
+        private bool AddToUrlDict(string enUrl, string deUrl)
+        {
+            // abbreviate certain URLs
+            enUrl = DeflateUrl(enUrl);
+            deUrl = DeflateUrl(deUrl);
+
+            // check whether we have that translation entry already
+            string value;
+            if (_urlDict.TryGetValue(enUrl, out value))
+            {
+                // we already have an entry for that key; see if the value is the same
+                if (value == deUrl)
+                    return false;
+
+                // change entry to new text
+                _urlDict[enUrl] = deUrl;
+                return true;
+            }
+
+
+            // add the entry to the in-memory dictonary
+            _urlDict.Add(enUrl, deUrl);
+            return true;
+        }
+
+        private bool AddToTextDict (string enText, string deText)
+        {
+            enText = NormalizeText(enText);
+
+            // check whether we have that translation entry already
+            string value;
+            if (_textDict.TryGetValue(enText, out value))
+            {
+                // we already have an entry for that key; see if the value is the same
+                if (value == deText)
+                    return false;
+
+                // change entry to new text
+                _textDict[enText] = deText;
+                return true;
+            }
+
+
+            // add the entry to the in-memory dictonary
+            _textDict.Add(enText, deText);
+            return true;
+        }
+
+        public bool AddTextTranslation(string enText, string deText)
+        {
+            if (!AddToTextDict(enText, deText))
+                return false;
+            SaveTextDict();
+            return true;
+        }
+
+        public bool AddUrlTranslation(string enUrl, string deUrl)
+        {
+            if (!AddToUrlDict(enUrl, deUrl))
+                return false;
+            SaveUrlDict();
+            return true;
+        }
+
+#if false
         /// <summary>
         /// This is the core function of the class. It tries to translate a hyperlink
         /// to an English Wikipedia page into its German equivalent.
@@ -164,7 +371,110 @@ namespace LinkTranslator
                 _topicDict.Add (ToWikiTopic(te.enUri), te);
             }
         }
+#endif
 
+        private bool LoadUrlDatabase (string fileName)
+        {
+            StreamReader inStream;
+            string line;
+            char[] separators = new char[] { ';' };
+            _urlDict = new Dictionary<string, string>();
+            string filePath = Path.Combine(Helpers.AppDataFolder, fileName);
+
+            try
+            {
+                using (inStream = File.OpenText(filePath))
+                {
+                    while ((line = inStream.ReadLine()) != null)
+                    {
+                        string[] parts = line.Split(separators);
+                        if (parts.Length < 2)
+                            continue; // skip line
+                        _urlDict.Add(UnescapeSemicolons(parts[0]), UnescapeSemicolons(parts[1]));
+                    }
+                }
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private bool LoadTextDatabase (string fileName)
+        {
+            StreamReader inStream;
+            string line;
+            char[] separators = new char[] { ';' };
+            _textDict = new Dictionary<string, string>();
+            string filePath = Path.Combine(Helpers.AppDataFolder, fileName);
+
+            try
+            {
+                using (inStream = File.OpenText(filePath))
+                {
+                    while ((line = inStream.ReadLine()) != null)
+                    {
+                        string[] parts = line.Split(separators);
+                        if (parts.Length >= 2)
+                            _textDict.Add(UnescapeSemicolons(parts[0]), UnescapeSemicolons(parts[1]));
+                    }
+                    return true;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private bool SaveUrlDict()
+        {
+            string filePath = Path.Combine(Properties.Settings.Default.appDataFolderPath, _fileNameUrlDB);
+            try
+            {
+                using (StreamWriter outStream = File.CreateText(filePath))
+                {
+                    // Acquire keys and sort them.
+                    var keyList = _urlDict.Keys.ToList();
+                    keyList.Sort();
+
+                    foreach (var key in keyList)
+                        outStream.WriteLine("{0};{1}", EscapeSemicolons(key), EscapeSemicolons(_urlDict[key]));
+                }
+                return true;
+            }
+            catch
+            {
+                MessageBox.Show($"Writing to URL translation database failed.", "File write error", MessageBoxButtons.OK);
+                return false;
+            }
+        }
+
+        private bool SaveTextDict()
+        {
+            string filePath = Path.Combine(Properties.Settings.Default.appDataFolderPath, _fileNameTextDB);
+            try
+            {
+                using (StreamWriter outStream = File.CreateText(filePath))
+                {
+                    // Acquire keys and sort them.
+                    var keyList = _textDict.Keys.ToList();
+                    keyList.Sort();
+
+                    foreach (var key in keyList)
+                        outStream.WriteLine("{0};{1}", EscapeSemicolons(key), EscapeSemicolons(_textDict[key]));
+                }
+                return true;
+            }
+            catch
+            {
+                MessageBox.Show($"Writing to text translation database failed.", "File write error", MessageBoxButtons.OK);
+                return false;
+            }
+        }
+
+#if false
         private bool TranslateByDatabaseXML (Hyperlink hl, Hyperlink deHL)
         {
             TransElem entry;
@@ -198,78 +508,194 @@ namespace LinkTranslator
                 deHL.transStatus = Hyperlink.TranslationStatus.partial;
             }
 
-            deHL.transMethod = "db";
+            deHL.transMethodUrl = "db";
+            deHL.transMethodText = "db";
             return true;
         }
+#endif
 
-        private bool FindGermanWikiTopicByWikidata (Hyperlink hl, Hyperlink deHL)
+        private bool FindGermanWikiTopicByWikidata (Hyperlink hl, Hyperlink deHL, bool foundUrl = false, bool foundText = false)
         {
             string topic = ToWikiPageName (hl.uri);
             if (topic == null || topic == "")
                 return false;
 
+            XmlReaderSettings setgs = new XmlReaderSettings();
+            setgs.DtdProcessing = DtdProcessing.Prohibit;
+            setgs.MaxCharactersFromEntities = 1024;
             string request = "https://www.wikidata.org/w/api.php?action=wbgetentities" +
                 "&sites=enwiki&languages=en|de&titles=" + topic +
                 "&props=sitelinks/urls&format=xml&sitefilter=enwiki|dewiki";
 
-            XmlReader xmlReader = XmlReader.Create (request);
+#if false
+            /////// Debugging code: See what the website returns in clear text
+            System.Net.WebClient client = new System.Net.WebClient();
+            System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12;
+            byte[] data = client.DownloadData(request);
+            string html = System.Text.Encoding.UTF8.GetString(data);
+#endif
 
-            while (xmlReader.Read ())
+            // Added Jan 10, 2020: Set security protocol type in order to avoid message from Wikipedia website
+            // that the browser is too old and insecure
+            System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12;
+
+            using (XmlReader xmlReader = XmlReader.Create(request, setgs))
             {
-                if (xmlReader.NodeType == XmlNodeType.Element &&
-                    xmlReader.Name == "sitelink" &&
-                    xmlReader.GetAttribute ("site") == "dewiki")
+                try
                 {
-                    deHL.uri = xmlReader.GetAttribute ("url");
-                    deHL.text = xmlReader.GetAttribute ("title");
-                    deHL.transStatus = Hyperlink.TranslationStatus.partial;
-                    deHL.transMethod = "wikidata";
-                    return true;
+                    while (xmlReader.Read())
+                    {
+                        if (xmlReader.NodeType == XmlNodeType.Element &&
+                            xmlReader.Name == "sitelink" &&
+                            xmlReader.GetAttribute("site") == "dewiki")
+                        {
+                            if (!foundUrl)
+                            {
+                                deHL.uri = xmlReader.GetAttribute("url");
+                                deHL.uri = Uri.UnescapeDataString(deHL.uri);
+                                deHL.transMethodUrl = "wikidata";
+                            }
+                            if (!foundText)
+                            {
+                                deHL.text = xmlReader.GetAttribute("title");
+                                deHL.transMethodText = "wikidata";
+                            }
+                            // if we added the text translation from the wikidata we regard the translation as partial
+                            deHL.transStatus = foundText ? Hyperlink.TranslationStatus.full :
+                                Hyperlink.TranslationStatus.partial;
+                            return true;
+                        }
+                    }
+                }
+                catch (XmlException excp)
+                {
+                    string msg = excp.Message;
+                    MessageBox.Show($"Exception message:\n{msg}", "Exception while reading WikiData", MessageBoxButtons.OK);
                 }
             }
-
             return false;
         }
 
-        private bool FindGermanWikiTopicByPageScan (Hyperlink hl, Hyperlink deHL)
+        private bool FindGermanWikiTopicByPageScan (Hyperlink hl, Hyperlink deHL, bool foundUrl = false, bool foundText = false)
         {
             XmlReaderSettings settings = new XmlReaderSettings ();
             settings.DtdProcessing = DtdProcessing.Parse;
-            XmlReader xmlReader = XmlReader.Create (hl.uri, settings);
-
-            bool langLabelSeen = false;
-            while (xmlReader.Read ())
+            using (XmlReader xmlReader = XmlReader.Create(hl.uri, settings))
             {
-                if ((xmlReader.NodeType == XmlNodeType.Element) && (xmlReader.Name == "h3"))
+                bool langLabelSeen = false;
+                try
                 {
-                    if (xmlReader.GetAttribute ("id") == "p-lang-label")
-                        langLabelSeen = true;
-                }
-
-                if (langLabelSeen && (xmlReader.NodeType == XmlNodeType.Element) && (xmlReader.Name == "a"))
-                {
-                    if (xmlReader.GetAttribute ("lang") == "de")
+                    while (xmlReader.Read())
                     {
-                        deHL.uri = xmlReader.GetAttribute ("href");
-                        deHL.transStatus = Hyperlink.TranslationStatus.partial;
-
-                        deHL.text = hl.text; // in case we don't find a title
-                        string title = xmlReader.GetAttribute ("title");
-                        if (title != null)
+                        if ((xmlReader.NodeType == XmlNodeType.Element) && (xmlReader.Name == "h3"))
                         {
-                            char dash = title[title.Length - 8];
-                            int idx = title.LastIndexOf (" \u2013 German");
-                            if (idx > 0)
-                                title = title.Substring (0, idx);
-                            deHL.text = title;
+                            if (xmlReader.GetAttribute("id") == "p-lang-label")
+                                langLabelSeen = true;
                         }
-                        deHL.transMethod = "wiki page";
-                        return true;
+
+                        if (langLabelSeen && (xmlReader.NodeType == XmlNodeType.Element) && (xmlReader.Name == "a"))
+                        {
+                            if (xmlReader.GetAttribute("lang") == "de")
+                            {
+                                if (!foundUrl)
+                                {
+                                    deHL.uri = xmlReader.GetAttribute("href");
+                                    deHL.uri = Uri.UnescapeDataString(deHL.uri);
+                                    deHL.transMethodUrl = "wikipage";
+                                }
+
+                                if (!foundText)
+                                {
+                                    string title = xmlReader.GetAttribute("title");
+                                    if (title != null)
+                                    {
+                                        char dash = title[title.Length - 8];
+                                        int idx = title.LastIndexOf(" \u2013 German");
+                                        if (idx > 0)
+                                            title = title.Substring(0, idx);
+                                        deHL.text = title;
+                                        deHL.transMethodText = "wikipage";
+                                        deHL.transStatus = Hyperlink.TranslationStatus.partial;
+                                    }
+                                }
+                                // if we added the text translation from the wikidata we regard the translation as partial
+                                deHL.transStatus = foundText ? Hyperlink.TranslationStatus.full :
+                                    Hyperlink.TranslationStatus.partial;
+                                return true;
+                            }
+                        }
                     }
+                }
+                catch (XmlException excp)
+                {
+                    string msg = excp.Message;
+                    MessageBox.Show($"Exception message:\n{msg}", "Exception while reading topic page", MessageBoxButtons.OK);
                 }
             }
             return false;
         }
+
+#if false
+        private void FindRedundantUrlEntries()
+        {
+            foreach (KeyValuePair<string, string> pair in _urlDict)
+            {
+                string enUrl = InflateUrl (pair.Key);
+                string deUrl = InflateUrl (pair.Value);
+
+                if (deUrl == enUrl)
+                {
+                    System.Console.WriteLine("untranslated: {0}", enUrl);
+                    Hyperlink enLink2 = new Hyperlink();
+                    enLink2.uri = enUrl;
+                    Hyperlink deLink2 = new Hyperlink();
+                    if (FindGermanWikiTopicByWikidata(enLink2, deLink2) ||
+                        FindGermanWikiTopicByPageScan(enLink2, deLink2))
+                    {
+                        string wikiDeUrl = Uri.UnescapeDataString(deLink2.uri);
+                        System.Console.WriteLine("   but now has DE: {0}", deLink2.uri);
+                    }
+                    continue;
+                }
+
+                Hyperlink enLink = new Hyperlink();
+                enLink.uri = enUrl;
+                Hyperlink deLink = new Hyperlink();
+                if (FindGermanWikiTopicByWikidata(enLink, deLink) ||
+                    FindGermanWikiTopicByPageScan(enLink, deLink))
+                {
+                    string wikiDeUrl = Uri.UnescapeDataString(deLink.uri);
+                    if (wikiDeUrl == deUrl)
+                    {
+                        System.Console.WriteLine("   -> {0}", enUrl);
+                    }
+                    else
+                    {
+                        System.Console.WriteLine("keep: {0} -> {1}", enUrl, deUrl);
+                    }
+                }
+            }
+        }
+
+        private void FindCasesForTranslateByPage()
+        {
+            foreach (KeyValuePair<string, string> pair in _urlDict)
+            {
+                string enUrl = InflateUrl(pair.Key);
+                string deUrl = InflateUrl(pair.Value);
+
+                Hyperlink enLink = new Hyperlink();
+                enLink.uri = enUrl;
+                Hyperlink deLink = new Hyperlink();
+                if (!FindGermanWikiTopicByWikidata(enLink, deLink) &&
+                    FindGermanWikiTopicByPageScan(enLink, deLink))
+                {
+                    System.Console.WriteLine("   -> {0}->{1}", enUrl, deLink.uri);
+                    FindGermanWikiTopicByWikidata(enLink, deLink);
+                }
+            }
+        }
+#endif
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         /// helper functions
@@ -332,14 +758,44 @@ namespace LinkTranslator
         private string NormalizeText (string s)
         {
             s = s.Trim ();
-            s.Replace (",", "");
-            s.Replace (".", "");
-            s.Replace (":", "");
+            s = s.Replace (",", "");
+            s = s.Replace (".", "");
+            s = s.Replace (":", "");
+            s = s.Replace (";", "");
             s = s.ToLower ();
             return s;
         }
 
+        private string InflateUrl(string url)
+        {
+            url = url.Replace("$(enWiki)", "https://en.wikipedia.org/wiki/");
+            url = url.Replace("$(deWiki)", "https://de.wikipedia.org/wiki/");
+            return url;
+        }
 
+        private string DeflateUrl(string url)
+        {
+            url = url.Replace("https://en.wikipedia.org/wiki/", "$(enWiki)");
+            url = url.Replace("https://wikipedia.org/wiki/", "$(enWiki)");
+            url = url.Replace("http://en.wikipedia.org/wiki/", "$(enWiki)");
+            url = url.Replace("http://wikipedia.org/wiki/", "$(enWiki)");
+
+            url = url.Replace("https://de.wikipedia.org/wiki/", "$(deWiki)");
+            url = url.Replace("http://de.wikipedia.org/wiki/", "$(deWiki)");
+            return url;
+        }
+
+        private string EscapeSemicolons (string s)
+        {
+            s = s.Replace("%", "%25");
+            return s.Replace(";", "%3B");
+        }
+
+        private string UnescapeSemicolons(string s)
+        {
+            s = s.Replace("%3B", ";"); 
+            return s.Replace("%25", "%");
+        }
 #if false
         // This function was previously used to convert the CSV-format translation file
         // into the XML-based translation database. Now obsolete.

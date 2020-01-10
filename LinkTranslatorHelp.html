@@ -6,7 +6,8 @@
 	<META NAME="GENERATOR" CONTENT="OpenOffice 4.1.1  (Win32)">
 	<META NAME="CREATED" CONTENT="0;0">
 	<META NAME="CHANGEDBY" CONTENT="Norbert Vorst&auml;dt">
-	<META NAME="CHANGED" CONTENT="20180721;10132376">
+	<META NAME="CHANGED" CONTENT="20190120;10464712">
+	<META NAME="CHANGEDBY" CONTENT="Norbert Vorstädt">
 	<STYLE TYPE="text/css">
 	<!--
 		P { margin-bottom: 0.2cm; line-height: 0.49cm }
@@ -28,15 +29,14 @@
 <BODY LANG="de-DE" DIR="LTR">
 <H1><FONT FACE="Verdana, sans-serif"><FONT SIZE=4>Link Translator
 Help</FONT></FONT></H1>
-<P CLASS="western">Link Translator is a little helper program that
-lets you easily translate English Wikipedia hyperlinks into their
-German equivalents, thereby replacing the text representation and the
-URL of the hyperlink. It does this by using several sources of
-information:</P>
+<P CLASS="western">Link Translator is a tool that lets you easily
+translate English Wikipedia hyperlinks into their German equivalents,
+thereby replacing the text representation and the URL of the
+hyperlink. It does this by using several sources of information:</P>
 <UL>
 	<LI><P CLASS="western"><FONT FACE="Verdana, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt">a
-	built-in database, which is XML-formatted and can be edited by the
-	user</FONT></FONT></P>
+	built-in database, which is based on text files and can be edited by
+	the user</FONT></FONT></P>
 	<LI><P CLASS="western"><FONT FACE="Verdana, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt">the
 	Wikidata service, which is Wikipedia's mechanism for generating the
 	list of inter-language links on the left hand side of a topic</FONT></FONT></P>
@@ -69,10 +69,9 @@ You can move back and forth between the hyperlinks via the <I>previous
 <P CLASS="western">Link Translator offers several alternatives for
 your workflow while working on a translation. One is to read a
 complete OpenOffice document and extract all its hyperlinks in a
-single operation. You do that by clicking the button <I>Translate
-Links in OpenOffice Document &hellip; </I>in the lower left corner of
-the dialog. (As an alternative you can also drag the file name from
-an Explorer window into the dialog.)</P>
+single operation. You do that by <I>File -&gt; </I><I>Translate Links
+in OpenOffice Document&hellip;</I>. (As an alternative you can also
+drag the file name from an Explorer window into the dialog.)</P>
 <P CLASS="western">Then you can browse through those hyperlinks with
 the <I>previous</I> / <I>next</I> buttons and see their suggested
 translations. You can edit the German translation or URI of a
@@ -82,9 +81,10 @@ your editing you can either</P>
 	<LI><P CLASS="western">append all translated hyperlinks to the
 	opened document, where you can pick them up later when your are
 	working in your OpenOffice document, or</P>
-	<LI><P CLASS="western">drag and drop one link a time from the Link
-	Translator window into an OpenOffice document and insert them at
-	their final position in your translation.</P>
+	<LI><P CLASS="western">drag and drop one link at a time from the
+	Link Translator window into an OpenOffice document or other
+	applications and insert them at their final position in your
+	translation document.</P>
 </UL>
 <H3 CLASS="western">Using Drag and Drop</H3>
 <P CLASS="western">Sometimes you want to just translate a single
@@ -93,12 +93,12 @@ this scenario is to select them in your web browser or in OpenOffice
 and drag them onto the Link Translator window. In this case Link
 Translator will translate your hyperlinks and you can look at them as
 usual with the <FONT FACE="Verdana, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt"><I>previous
-/ next</I></FONT></FONT><FONT FACE="Verdana, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt">
-buttons. Note however that you will not be able to append the
-translations to an OpenOffice document. Instead you can start a new
-drag in the Link Translator window and drag the translation to your
-OpenOffice window. Thereby you can place the translation precisely
-where you want them to be.</FONT></FONT></P>
+/ next</I></FONT></FONT> <FONT FACE="Verdana, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt">buttons.
+Note however that you will not be able to append the translations to
+an OpenOffice document. Instead you can start a new drag in the Link
+Translator window and drag the translation to your OpenOffice window
+or another application. Thereby you can place the translation
+precisely where you want them to be.</FONT></FONT></P>
 <H3 CLASS="western">Using Copy and Paste</H3>
 <P CLASS="western">Very similar to the Drag and Drop method is using
 Copy and Paste. Instead of draging some text containing hyperlinks
@@ -107,10 +107,10 @@ application (either by using a menu command or by the Ctrl-C keyboard
 shortcut) and then paste it to the Link Translator window (again
 either via an menu command or via the Ctrl-V keyboard shortcut). And
 much like in the Drag and Drop method you can now look at each
-hyperlink and transfer the translations by another Copy and Paste
+hyperlink and transfer the translations by another Copy-and-Paste
 back to your document. While being in the Link Translator window
-press Ctrl-C (or use the <I>Edit &rarr; Copy</I> menu command) the go
-to your OpenOffice window and press Ctrl-V there to insert the
+press Ctrl-C (or use the <I>Edit &rarr; Copy</I> menu command) then
+go to your OpenOffice window and press Ctrl-V there to insert the
 translated hyperlink.</P>
 <P CLASS="western">Which of the three methods you use is totally up
 to you and depends on your preferred workflow. You can even mix the
@@ -119,11 +119,25 @@ three methods, for example open an OpenOffice document with the
 then move the translations over to your target document in a
 one-by-one fashion by Drag and Drop.</P>
 <H2 CLASS="western">Installation</H2>
-<P CLASS="western"><BR><BR>
-</P>
-<P CLASS="western"><BR><BR>
-</P>
-<H2 CLASS="western">The LinkDatabase.xml File</H2>
+<P CLASS="western">The installation of LinkTranslator is extremely
+simple. Just unpack the zip-archive into a directory &ndash; that's
+all. If you want to install LinkTranslater in a Windows-conformant
+way this directory should be under the system's P<I>rogram Files</I>
+folder (<I>Programme</I> in a German system). You will need
+administrator rights to create and access a directory there. As an
+alternative you can create a directory on any place where you have
+write access from your normal user account and run LinkTranslator
+from there.</P>
+<P CLASS="western">LinkTranslator comes with two files that comprise
+the translation database: <I>TransUrlDb.txt</I> and <I>TransTextDb.txt</I>.
+These are simple text files that you can open in any text editor. As
+LinkTranslator allows you to amend those files by more translation
+rules these files must be write accessible to your normal user
+account. As this might not be the case when you install under Program
+Files LinkTranslator allows you to move these files to a different
+directory. Go to <I>Tools &rarr; Configure&hellip;</I> to tell
+LinkTranslator the folder you have put them to.</P>
+<H2 CLASS="western">The Translation Database Files</H2>
 <P CLASS="western"><BR><BR>
 </P>
 </BODY>

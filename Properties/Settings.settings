@@ -5,5 +5,14 @@
     <Setting Name="documentFolderPath" Type="System.String" Scope="User">
       <Value Profile="(Default)">D:\ESO Übersetzungen</Value>
     </Setting>
+    <Setting Name="appDataFolderPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="UpgradeRequired" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="reduceESOLinks" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

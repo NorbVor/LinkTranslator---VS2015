@@ -5,6 +5,7 @@ using System.IO;
 
 namespace LinkTranslator
 {
+#if false // this entire code was in an initial version and is no longer needed
     /*
      * This class contains an auxiliary functions to collect valid 
      * hyperlink translations from an existing document in order to help
@@ -90,4 +91,5 @@ namespace LinkTranslator
             }
         }
     }
+#endif
 }

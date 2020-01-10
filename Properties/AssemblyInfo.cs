@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Resources;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -6,17 +7,17 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle ("Link Translator")]
-[assembly: AssemblyDescription ("This utility translates hyperlinks in OpenOffice" +
-"documents from English to German. For all Wikipedia links it" +
-"consults the Wikidata service and finds their German equivalent" +
-"if available. In addition it applies a manually generated translation" +
-"table in the file LinkDatabase.txt. The translated links are appended" +
-"at the end of the document, where they can easily be picked up" +
-"during the translation process of the main text.")]
+[assembly: AssemblyDescription ("This utility translates hyperlinks in OpenOffice " +
+"documents from English to German. For all Wikipedia links it " +
+"consults the Wikidata service and finds their German equivalent " +
+"if available. In addition it applies a manually generated translation " +
+"database to translate URLs and link text. The translated links are either appended " +
+"at the end of the originating OpenOffice document or can be transferred by drag and drop " +
+"to the translation file.")]
 [assembly: AssemblyConfiguration ("")]
-[assembly: AssemblyCompany ("")]
+[assembly: AssemblyCompany ("Norbert_Vorstädt")]
 [assembly: AssemblyProduct ("Link Translator")]
-[assembly: AssemblyCopyright ("Copyright ©  Norbert Vorstädt, 2018")]
+[assembly: AssemblyCopyright ("Copyright ©  Norbert Vorstädt, 2018, 2019, 2020")]
 [assembly: AssemblyTrademark ("")]
 [assembly: AssemblyCulture ("")]
 
@@ -35,5 +36,7 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      Revision
 //
-[assembly: AssemblyVersion ("1.0.0.0")]
-[assembly: AssemblyFileVersion ("1.0.0.0")]
+[assembly: AssemblyVersion ("1.2.*")]
+[assembly: AssemblyFileVersion ("1.2.0.0")]
+[assembly: NeutralResourcesLanguage("")]
+

@@ -9,42 +9,65 @@ using System.IO;
 using System.Xml;
 using Ionic.Zip;
 using System.Collections;
+using LinkTranslator.Properties;
+using System.Threading;
+using System.Globalization;
+
+//TODO: Installer
 
 namespace LinkTranslator
 {
     public partial class MainDlg : Form
     {
         private string _filePath;
+        private bool _readOnlyMode;
         private List<Hyperlink> _enLinks;
         private List<Hyperlink> _deLinks;
+        private LinkTranslator _lt = null;
         private int _curIdx = -1;
         OpenOfficeDoc _doc;
         bool _emitingDragDrop = false;
+        bool _isInitializing = true;
 
         public MainDlg ()
         {
-            InitializeComponent ();
-            lblNumber.Text = "";
+            Helpers.CheckSettingsUpgrade();
+            InitializeComponent();
+            CheckAppFolderAccess();
 
+            // initialize dialog fields
+            lblNumber.Text = "";
+            stsAction.Text = "";
+            if (_readOnlyMode)
+                Text += " (read-only mode)";
+
+            // creat the link translator object
+            _lt = new LinkTranslator();
+
+            // create the two link listes for English and German links
             _enLinks = new List<Hyperlink>();
             _deLinks = new List<Hyperlink>();
+
+            // display an empty window
             _curIdx = -1;
             ShowCurrentLink ();
-            btnAppendToDoc.Enabled = false;
-            stsAction.Text = "";
+
+            // we enable that option only when we have read an OpenOffice document to which
+            // we can store the translated links
+            appendLinksToDocumentToolStripMenuItem.Enabled = false;
         }
 
         /**********************************************************************
         *** Event Handlers
         **********************************************************************/
 
-        private void btnTransLinks_Click (object sender, EventArgs e)
+        private void translateLinksInOpenOfficeDocumentToolStripMenuItem_Click(object sender, EventArgs e)
         {
             string documentFolderPath = Properties.Settings.Default.documentFolderPath;
 
             // find the newest file in the document directory in order to
             // preselect it in the file open dialog
-            string preselFileName = NewestFileofDirectory (documentFolderPath);
+            string preselFileName = NewestFileofDirectory(documentFolderPath);
 
 #if DEBUG
             documentFolderPath = "";
@@ -52,26 +75,26 @@ namespace LinkTranslator
 #endif
 
             // open a file dialog to ask for the file to work on
-            OpenFileDialog dlg = new OpenFileDialog ();
+            OpenFileDialog dlg = new OpenFileDialog();
             dlg.InitialDirectory = documentFolderPath;
             dlg.Filter = "OpenOffice files (*.odt)|*.odt|All files (*.*)|*.*";
             if (preselFileName != null)
                 dlg.FileName = preselFileName;
             dlg.RestoreDirectory = true;
-            if (dlg.ShowDialog () != DialogResult.OK)
+            if (dlg.ShowDialog() != DialogResult.OK)
                 return;
 
-            ProcessFile (dlg.FileName);
+            ProcessFile(dlg.FileName);
         }
 
 
         // append the translated hypelinks at the end of the document
-        private void btnAppendToDoc_Click (object sender, EventArgs e)
+        private void appendLinksToDocumentToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (_doc == null || _filePath == null)
                 return;
             stsAction.Text = "Appending hyperlinks to document";
-            if (!_doc.AppendLinksToDoc (_deLinks))
+            if (!_doc.AppendLinksToDoc(_deLinks))
                 return;
 
             // save the document back to disk
@@ -80,14 +103,14 @@ namespace LinkTranslator
 #if DEBUG
             outputPath = "newDoc.odt";
 #endif
-            _doc.Save (outputPath);
+            _doc.Save(outputPath);
             stsAction.Text = "Done";
 
             _doc = null;
             _filePath = null;
-            ClearAllLinks ();
-            UpdateDialogTitle ();
-            btnAppendToDoc.Enabled = false;
+            ClearAllLinks();
+            UpdateDialogTitle();
+            appendLinksToDocumentToolStripMenuItem.Enabled = false;
         }
 
         private void btnPrevious_Click (object sender, EventArgs e)
@@ -118,15 +141,19 @@ namespace LinkTranslator
 
         private void txtDeText_TextChanged (object sender, EventArgs e)
         {
-            if (_curIdx < 0)
+            if (_curIdx < 0 || _isInitializing)
                 return;
+            _deLinks[_curIdx].textChanged = true;
+            btnAddTextToDB.Enabled = !_readOnlyMode;
             _deLinks[_curIdx].text = txtDeText.Text;
         }
 
         private void txtDeURL_TextChanged (object sender, EventArgs e)
         {
-            if (_curIdx < 0)
+            if (_curIdx < 0 || _isInitializing)
                 return;
+            _deLinks[_curIdx].uriChanged = true;
+            btnAddURLtoDB.Enabled = !_readOnlyMode;
             _deLinks[_curIdx].uri = txtDeURL.Text;
         }
 
@@ -137,13 +164,8 @@ namespace LinkTranslator
         {
             // open the configuration dialog
             ConfigDlg dlg = new ConfigDlg ();
-            dlg.ShowDialog ();
-        }
-
-        private void collectLinksToolStripMenuItem_Click (object sender, EventArgs e)
-        {
-            LinkCollector linkCol = new LinkCollector ();
-            linkCol.Execute ();
+            if (dlg.ShowDialog() == DialogResult.OK)
+                _lt.ReloadDatabase();
         }
 
         private void aboutToolStripMenuItem_Click (object sender, EventArgs e)
@@ -155,7 +177,54 @@ namespace LinkTranslator
 
         private void showHelpToolStripMenuItem_Click (object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start ("LinkTranslatorHelp.html");
+            System.Diagnostics.Process.Start("acrord32.exe", $"/A \"zoom=100\" " + "LinkTranslatorHelp.pdf");
+        }
+
+        private void btnAddTextToDB_Click(object sender, EventArgs e)
+        {
+            if (_curIdx < 0)
+                return;
+            _lt.AddTextTranslation(txtEnText.Text, txtDeText.Text);
+
+            // re-translate the current link with the amended database and reset changed-flag.
+            // but keep any changes to the URL!
+            bool savedModifiedUri = false;
+            string modifiedUri = null;
+            if (_deLinks[_curIdx].uriChanged)
+            {
+                modifiedUri = _deLinks[_curIdx].uri;
+                savedModifiedUri = true;
+            }
+            _deLinks[_curIdx] = _lt.TranslateLink2(_enLinks[_curIdx]);
+            if (savedModifiedUri)
+            {
+                _deLinks[_curIdx].uri = modifiedUri;
+                _deLinks[_curIdx].uriChanged = true;
+            }
+            ShowCurrentLink();
+        }
+
+        private void btnAddURLtoDB_Click(object sender, EventArgs e)
+        {
+            if (_curIdx < 0)
+                return;
+            _lt.AddUrlTranslation(txtEnURL.Text, txtDeURL.Text);
+
+            // re-translate the current link with the amended database and reset changed-flag.
+            bool savedModifiedText = false;
+            string modifiedText = null;
+            if (_deLinks[_curIdx].textChanged)
+            {
+                modifiedText = _deLinks[_curIdx].text;
+                savedModifiedText = true;
+            }
+            _deLinks[_curIdx] = _lt.TranslateLink2(_enLinks[_curIdx]);
+            if (savedModifiedText)
+            {
+                _deLinks[_curIdx].text = modifiedText;
+                _deLinks[_curIdx].textChanged = true;
+            }
+            ShowCurrentLink();
         }
 
         private void btnClose_Click (object sender, EventArgs e)
@@ -193,6 +262,18 @@ namespace LinkTranslator
                 DropHTMLText ((string)dataObj);
             else if ((dataObj = Clipboard.GetData (DataFormats.FileDrop)) != null)
                 DropFiles ((string[])Clipboard.GetData (DataFormats.FileDrop));
+        }
+
+        private void cbReduceESOLinks_CheckedChanged(object sender, EventArgs e)
+        {
+            // save new setting
+            Settings.Default.reduceESOLinks = cbReduceESOLinks.Checked;
+
+            // re-translate all links
+            _lt.ReTranslateESOLinks (_enLinks, _deLinks);
+            _isInitializing = true;
+            txtDeURL.Text = _deLinks[_curIdx].uri;
+            _isInitializing = false;
         }
 
 
@@ -257,6 +338,7 @@ namespace LinkTranslator
         {
             _filePath = filePath;
             UpdateDialogTitle ();
+            Cursor.Current = Cursors.WaitCursor;
 
             // read the OpenOffice document into memory; if the user has the same file still open
             // in OpenOffice this operation fails with an exception; we then giv ehim the chance to
@@ -281,6 +363,7 @@ namespace LinkTranslator
                     else
                     {
                         stsAction.Text = "Processing aborted.";
+                        Cursor.Current = Cursors.Default;
                         return;
                     }
                 }
@@ -289,20 +372,22 @@ namespace LinkTranslator
             // extract the hyperlinks from the document
             stsAction.Text = "Extracting hyperlinks";
             ClearAllLinks ();
-            if (!_doc.ExtractLinks (_enLinks))
+            if (!_doc.ExtractLinks(_enLinks))
+            {
+                Cursor.Current = Cursors.Default;
                 return;
+            }
 
             // translate these hyperlinks
             stsAction.Text = "Translating hyperlinks";
-            List<Hyperlink> transLinks = new List<Hyperlink> ();
-            LinkTranslator tl = new LinkTranslator ();
-            tl.TranslateLinks (_enLinks, _deLinks);
+            _lt.TranslateLinks2 (_enLinks, _deLinks);
 
             // show  the links and their translations
             _curIdx = 0;
             ShowCurrentLink ();
             stsAction.Text = "Done";
-            btnAppendToDoc.Enabled = true;
+            Cursor.Current = Cursors.Default;
+            appendLinksToDocumentToolStripMenuItem.Enabled = true;
         }
 
         private void ClearAllLinks ()
@@ -315,6 +400,8 @@ namespace LinkTranslator
 
         private void ShowCurrentLink ()
         {
+            _isInitializing = true;
+
             if (_curIdx < 0)
             {
                 lblNumber.Text = string.Empty;
@@ -324,6 +411,10 @@ namespace LinkTranslator
                 txtDeURL.Text = string.Empty;
                 btnPrevious.Enabled = false;
                 btnNext.Enabled = false;
+                btnAddTextToDB.Enabled = false;
+                btnAddURLtoDB.Enabled = false;
+                lblTransMethodText.Text = string.Empty;
+                lblTransMethodUrl.Text = string.Empty;
                 return;
             }
 
@@ -332,11 +423,20 @@ namespace LinkTranslator
             txtEnURL.Text = _enLinks[_curIdx].uri;
             txtDeText.Text = _deLinks[_curIdx].text;
             txtDeURL.Text = _deLinks[_curIdx].uri;
-            lblTransMethod.Text = _deLinks[_curIdx].transMethod;
-            if (_deLinks[_curIdx].transMethod == "db")
-                lblTransMethod.Text += " (" + _deLinks[_curIdx].transStatus.ToString () + ")";
+            lblTransMethodText.Text = _deLinks[_curIdx].transMethodText;
+            lblTransMethodText.ForeColor = (_deLinks[_curIdx].transMethodText == "none") ? Color.Red :
+                 (_deLinks[_curIdx].transMethodText != "DB") ? Color.Orange : 
+                 Color.Green;
+            lblTransMethodUrl.Text = _deLinks[_curIdx].transMethodUrl;
+            lblTransMethodUrl.ForeColor = (_deLinks[_curIdx].transMethodUrl == "none") ?
+                Color.Red : Color.Green;
             btnPrevious.Enabled = _curIdx > 0;
             btnNext.Enabled = _curIdx < _enLinks.Count - 1;
+
+            btnAddTextToDB.Enabled = _deLinks[_curIdx].textChanged && !_readOnlyMode;
+            btnAddURLtoDB.Enabled = _deLinks[_curIdx].uriChanged && !_readOnlyMode;
+
+            _isInitializing = false;
         }
 
         private void UpdateDialogTitle ()
@@ -361,6 +461,9 @@ namespace LinkTranslator
             ClearAllLinks ();
             _curIdx = -1; // in case we don't find any links
 
+            // set wait cursor
+            Cursor.Current = Cursors.WaitCursor;
+
             // unpack the clipboard envelope
             ClipboardEnvelope env = new ClipboardEnvelope ();
             if (!env.Read (htmlString))
@@ -373,12 +476,14 @@ namespace LinkTranslator
             {
                 if (parser.TagName.ToLower () == "a")
                 {
-                    Hyperlink hl = new Hyperlink ();
+                    string url = "";
                     while (parser.ReadAttribute ())
                     {
                         if (parser.AttributeName.ToLower () == "href")
-                            hl.uri = parser.AttributeValue;
-                        break;
+                        {
+                            url = parser.AttributeValue;
+                            break;
+                        }
                     }
                     StringBuilder sb = new StringBuilder ();
                     sb.Append (parser.IntraTagText);
@@ -391,21 +496,28 @@ namespace LinkTranslator
                         sb.Append (parser.IntraTagText);
                     }
 
-                    string text = System.Web.HttpUtility.HtmlDecode (sb.ToString ());
-                    hl.text = text;
+                    if (url.Length > 0)
+                    {
+                        string text = System.Web.HttpUtility.HtmlDecode (sb.ToString ());
+                        Hyperlink hl = new Hyperlink();
+                        hl.uri = url;
+                        hl.text = text;
 
-                    // enter the link into the link list
-                    _enLinks.Add (hl);
+                        // enter the link into the link list
+                        _enLinks.Add (hl);
+                    }
                 }
             }
 
             // tranlate the links
-            LinkTranslator tl = new LinkTranslator ();
-            tl.TranslateLinks (_enLinks, _deLinks);
+            _lt.TranslateLinks2 (_enLinks, _deLinks);
 
             // show the link and its translations
             _curIdx = _enLinks.Count > 0 ? 0 : -1;
             ShowCurrentLink ();
+
+            // cursor back to normal
+            Cursor.Current = Cursors.Default;
         }
 
 
@@ -447,6 +559,40 @@ namespace LinkTranslator
             sb.Append (encodedText);
             sb.Append ("</A>");
             return sb.ToString ();
+        }
+
+        private void CheckAppFolderAccess()
+        {
+            _readOnlyMode = true;
+
+            // replace empty path by the current directory, so we can test the existence of it
+            string dataFolder = Helpers.AppDataFolder;
+            if (string.IsNullOrEmpty(dataFolder))
+                dataFolder = Directory.GetCurrentDirectory();
+
+            // check that directory exists
+            if (!Directory.Exists(dataFolder))
+            {
+                MessageBox.Show($"The translation database folder {Properties.Settings.Default.appDataFolderPath} does not exist.",
+                    "Directory not found", MessageBoxButtons.OK);
+                return;
+            }
+
+            // check write access on that directory
+            if (!Helpers.CheckDirectoryWriteAccess(dataFolder))
+            {
+                if (string.IsNullOrEmpty(dataFolder))
+                    dataFolder = Directory.GetCurrentDirectory();
+                MessageBox.Show($"The folder {dataFolder} cannot be written to by this application. " +
+                    "Go to Tools->Configuration... to switch to a writable folder and place the " +
+                    "translation files TransUrlDb.txt and TransTextDb.txt in there!\n\n" +
+                    "Until you do that, you will not be able to add new entries to the translation database.",
+                    "No write access to directory", MessageBoxButtons.OK);
+                return;
+            }
+
+            // we do have write access
+            _readOnlyMode = false;
         }
     }
 }

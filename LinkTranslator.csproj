@@ -63,7 +63,10 @@
     <GenerateManifests>true</GenerateManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <SignManifests>true</SignManifests>
+    <SignManifests>false</SignManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>LinkTranslatorIcon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Ionic.Zip, Version=1.9.1.5, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL" />
@@ -89,6 +92,7 @@
     <Compile Include="ConfigDlg.Designer.cs">
       <DependentUpon>ConfigDlg.cs</DependentUpon>
     </Compile>
+    <Compile Include="Helpers.cs" />
     <Compile Include="HtmlMiniParser.cs" />
     <Compile Include="MainDlg.cs">
       <SubType>Form</SubType>
@@ -127,6 +131,7 @@
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="LinkTranslatorIcon.icl" />
     <None Include="LinkTranslator_TemporaryKey.pfx" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -149,6 +154,7 @@
     <Content Include="LinkTranslatorHelp.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="LinkTranslatorIcon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
