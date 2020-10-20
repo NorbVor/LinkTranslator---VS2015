@@ -1,0 +1,301 @@
+25 orionis group;25 Orionis Gruppe
+252p/linear;252P/LINEAR
+3.6-metre telescope;3,6-Meter Teleskop
+accretion disc;Akkretionsscheibe
+active centre;aktive Zentrum
+active galactic nucleus;aktive Galaxienkern
+active galaxies;aktive Galaxien
+active galaxy;aktive Galaxie
+adaptive optics;adaptives Optiksystem
+airglow;Airglow
+aldebaran;Aldebaran
+alpaca;Alpaka
+alpha centauri;Alpha Centauri
+alpha crucis;Acrux
+andes;Anden
+andes mountains;Anden
+andromeda galaxy;Andromedagalaxie
+antares;Antares
+antenna;Antenne
+anticrepuscular rays;Gegendämmerungsstrahlen
+antisolar point;Sonnengegenpunkt
+asteroid belt;Asteroidengürtel
+asteroid familie;Asteroidenfamilie
+astrochemical;astrochemischer
+astronomical unit or au;Astronomische Einheit
+astrophotographer;Astrofotograf
+asymptotic giant branch;asymptotischen Riesenast
+at the very centre of our galaxy;im Zentrum unserer Milchstraße
+atacama desert;Atacama-Wüste
+atacama large millimeter/submillimeter array;Atacama Large Millimeter/submillimeter Array
+atmospheric refraction;astronomische Refraktion
+au;AE
+aurora;Polarlicht
+auxiliary telescopes;Hilfsteleskope
+barnard's loop;Barnard's Loop
+barred irregular;irreguläre Zwerggalaxie
+beta centauri;Beta Centauri
+beta crucis;Beta Crucis
+betelgeuse;Beteigeuze
+big bang;Urknall
+big dipper;Große Wagen
+binary star system;Doppelsternsystem
+boomerang nebula;Boomerangnebel
+bow waves;Bugwellen
+brown dwarf;Brauner Zwerg
+california nebula;Kaliforniennebel
+camelid;Kamel
+canis major;Canis Major
+canopus;Canopus
+carbon monoxide;Kohlenstoffmonoxid
+carbon-rich;kohlenstoffreich
+carina;Carina (Kiel des Schiffes)
+carina nebula;Carinanebel
+cassegrain focus;Cassegrainfokus
+cat’s paw nebula (ngc 6334);Katzenpfotennebel (NGC 6334)
+cattle egret;Kuhreiher
+ccd camera;CCD-Sensor
+celestial equator;Himmesäquators
+celestial pole;Himmelspol
+centaurus;Zentaur
+cerro armazones;Cerro Armazones
+cerro paranal;Cerro Paranal
+cherenkov radiation;Tscherenkow-Strahlung
+circumbinary planet;zirkumbinärer Planet
+circumstellar disc;zirkumstellare Scheibe
+coalsack nebula;Kohlensack
+comet c/2014 q2 (lovejoy;Komet C/2014 Q2 (Lovejoy)
+comet lovejoy;Komet Lovejoy
+comets;Komet
+cone nebula;Konusnebel
+conjunction;Konjunktion
+constellation of coma berenices;Sternbild Coma Berenices
+constellation of crux;Sternbild Kreuz des Südens (lat. crux)
+constellation of orion;Sternbild Orion
+constellation of perseus;Sternbild Perseus
+constellation of sagittarius;Sternbild Schütze
+constellation of virgo;Sternbild Virgo (Jungfrau)
+constellations of the zodiac;Tierkreiszeichen
+core collapse of a massive star;Kernkollaps
+cosmic dust;kosmischer Staub
+cosmic microwave background;kosmischer Mikrowellenhintergrund
+crescent moon;Mondsichel
+c-type;C-Asteroiden
+dark matter;Dunkler Materie
+dark nebulae;Dunkelwolke
+dawn spacecraft;Dawn-Raumsonde
+delta crucis;Delta Crucis
+density waves;Dichtewellen
+diaguita;Diaguita
+diffraction limit;theoretischen Auflösungsgrenze
+direct imaging;direkte Beobachtung
+disc;Scheibe
+disc of rotating material;Scheibe aus rotierendem Material
+dust;Staubwolke
+dust lanes;Staubbänder
+dusty;Staub
+dwarf galaxies;Zwerggalaxien
+dwarf galaxy;Zwerggalaxie
+dwarf planet;Zwergplanet
+earthshine;aschgraues Mondlicht
+ecliptic;Ekliptik
+einstein rings;Einsteinring
+electrons;Elektronen
+elliptical galaxy;elliptischen Galaxie
+emission nebula;Emissionsnebel
+eso photo ambassador;ESO-Fotobotschafter
+ESO Photo Ambassador;ESO-Fotobotschafter
+ESO Picture of the Week;ESO-Bild der Woche
+eso supernova planetarium & visitor centre;ESO Supernova Planetarium und Besucherzentrum
+eso’s headquarters;Hauptsitz der ESO
+eso’s paranal observatory;Paranal Observatorium der ESO
+ESO’s Science Archive;Wissenschaftsarchiv der ESO
+eso’s very large telescope;Very Large Telescope der ESO
+ESO’s Very Large Telescope;Very Large Telescope der ESO
+exocomets;Exokometen
+exoplanet;Exoplanet
+exoplanets;Exoplaneten
+fomalhaut b;Fomalhaut b
+fornax;Fornax
+fornax cluster;Fornax-Galaxienhaufen
+full moon;Vollmond
+fusion;Wasserstofffusion
+galaxies;Galaxien
+galaxy cluster;Galaxienhaufen
+galaxy cluster rcs2 j2327;Galaxienhaufen RCS2 J2327
+galaxy clusters;Galaxienhaufen
+gamma crucis;Gamma
+gamma rays;Gammastrahlung
+gamma-ray bursts;Gammablitze
+garching bei münchen;Garching bei München
+gegenschein;Gegenschein
+general theory of relativity;Allgemeine Relativitätstheorie
+giant;Riesen- und Überriesensterne
+globular cluster;Kugelsternhaufen
+goddess of youth;Göttin der Jugend
+gravitational instability;Gravitationsinstabilität
+gravitational lensing;Gravitationslinse
+gravity;Gravitation
+great red spot;Großer Roter Fleck
+guanaco;Guanako
+gum nebula;Gum-Nebel
+halo;Halo
+h-chondrites;H-Chondrite
+hd 106906 b;HD 106906 b
+heart of our galaxy;Herz unserer Galaxis
+helium;Helium
+herbig-haro object;Herbig-Haro Objektes
+horsehead nebula;Pferdekopfnebel
+hydrogen;Wasserstoff
+hydroxyl;Hydroxylgruppen
+ic 2602;IC 2602
+interferometer;Interferometer
+interstellar material;interstellare Materie
+interstellar medium;interstellares Medium
+ionised;ionisiert
+ionised gas;ionisiertes Gas
+iridium communication satellites;Iridium-Kommunikationssatelliten
+Iridium communication satellites;Iridium-Kommunikationssatelliten
+james dunlop;James Dunlop
+johann palisa;Johann Palisa
+john dreyer;Johan Ludvig Emil Dreyer
+jupiter;Jupiter
+la silla observatory;La Silla Observatorium
+lagoon nebula;Lagunennebels
+large and small magellanic clouds;Große und Kleine Magellansche Wolke
+large magellanic cloud;Große Magellansche Wolke
+las ánimas;Las Ánimas
+laser guide star;Laser Leitstern
+laser guide star (lgs);Laser Leitstern
+late heavy bombardment;das Große Bombardement
+light echo;Lichtecho
+light pollution;Lichtverschmutzung
+light-minutes;Lichtminuten
+local group;Lokale Gruppe
+louvres;Stellläden
+lunar eclipse;Mondfinsternis
+lupus (the wolf);Lupus (Wolf)
+magellanic clouds;Magellanschen Wolken
+magnetorotational instability;Magnetorotationsinstabilität
+main belt asteroid;Hauptgürtels
+mapuche;Mapuche
+mars;Mars
+mauna kea;Mauna Kea
+mercury;Merkur
+metals;Metalle
+meteor;Meteor
+microlensing;Mikrolinseneffekt
+microwave radiation;Mikrowellenstrahlung
+milky way;Milchstraße
+molecular cloud;Molekülwolke
+molecular clouds;Molekülwolken
+molecular hydrogen;molekularer Wasserstoff
+natural satellite;natürlicher Satellit
+nebula;Nebel
+nebulae;Nebel
+neptune;Neptun
+new general catalogue;New General Catalogue
+ngc 1398;NGC 1398
+ngc 1404;NGC 1404
+ngc 3532;NGC 3532
+ngc 6822;NGC 6822
+nicolas louis de lacaille;Nicolas Louis de Lacaille
+nuclear fusion;Kernfusion
+nuclear power;Atomkraft
+nuclear reactions;H-II-Region
+octans;Octans (Oktant)
+olympus mons;Olympus Mons
+ophiuchus;Ophiuchus (Schlangenträger)
+orion;Orion
+orion (the hunter);Orion (der Jäger)
+orion nebula;Orionnebel
+orion’s famous belt;Oriongürtels
+parabolic antenna;Parabolantenne
+paranal observatory;Paranal-Observatorium
+penitentes;Penitentes
+perseus;Perseus
+peruvian inca conquests;Inka
+petroglyphs;Petroglyphen
+photons;Photonen
+photosphere;Photosphäre
+picture of the week;Bild der Woche
+piscis austrinus;Piscis Austrinus (südlicher Fisch)
+plane of our earth’s orbit;Ebene der Erdumlaufbahn
+planetary nebula;planetarischer Nebel
+planetesimal;Planetesimalen
+pleiades;Plejaden
+polarimetric;polarimetrisch
+procyon;Prokyon
+protoplanet;Protoplanet
+protoplanetary disc;protoplanetare Scheibe
+protoplanetary discs;protoplanetare Scheiben
+protoplanetary nebula;Protoplanetarischer Nebel
+protoplanetary phase;protoplanetaren Phase
+protoplanets;Protoplaneten
+protostar;Protostern
+quadcopter;Quadcopter
+quantum of solace;Ein Quantum Trost
+quasar;Quasar
+red giant star;Rote Riese
+red supergiant;Rote Überriese
+refracted;gebrochen
+resolution;Auflösung
+rosette nebula;Rosettennebel
+rotation of the earth;Erddrehung
+sagittarius;Sagittarius
+salar de atacama;Salar de Atacama
+san pedro de atacama;San Pedro de Atacama
+saturn;Saturn
+scattered;gestreut
+scorpius;Scorpius (Skorpion)
+sculptor;Sculptor (Bildhauer)
+serpens;Schlange (lat. serpens)
+serpens south star cluster;Serpens South Sternhaufen
+seyfert galaxy;Seyfertgalaxie
+sirius;Sirius
+sky’s south pole;Himmelssüdpol
+small magellanic cloud;Kleine Magellansche Wolke
+sodium;Natrium
+solar system;Sonnensystem
+southern celestial pole;Himmelssüdpol
+southern cross;Kreuz des Südens
+spanish conquest;Eroberung durch die Spanier
+spiral galaxies;Spiralnebel
+spiral galaxy;Spiralnebel
+spring tides;Springtiden
+st julia of corsica;Julia von Corsica
+star clusters;Sternhaufen
+star formation;Sternentstehung
+star trails;Strichspuren
+star-forming region;Sternentstehungsregion
+star-forming regions;Sternentstehungsregionen
+stellar winds;Sonnenwinde
+straight bar;Balkenspiralgalaxie
+strong lensing;starker Gravitationslinseneffekt
+s-type;S-Asteroiden
+sub-millimetre;Submillimeter
+submillimetre astronomy;Submillimeter-Astronomie
+sun;Sonne
+sun pillar;Lichtsäule
+sunyaev-zel’dovich (sz) effect;Sunjajew-Seldowitsch-Effekt
+supermassive black hole;supermassereiches Schwarzen Loch
+supermoon;Supermond
+supernova;Supernova
+supernovae;Supernovae
+taurus (the bull);Taurus (Stier)
+terrestrial planets;erdähnlicher Planet
+terry lovejoy;Terry Lovejoy
+the ecliptic plane;Ebene der Ekliptik
+the milky way;Milchstraße
+the sun;unsere Sonne
+transit photometry;Transitmethode
+t-tauri star;T-Tauri-Stern
+type la supernova;Supernova vom Typ Ia
+vela;Vela (Segel des Schiffs)
+venus;Venus
+vlt interferometer (vlti);VLT Interferometer (VLTI)
+weak gravitational lensing;schwache Gravitationslinseneffekt
+william herschel;Wilhelm Herschel
+wind of charged particles;Sonnenwind
+yellow hypergiant;Gelber Hyperriese
+zodiacal light;Zodiakallicht

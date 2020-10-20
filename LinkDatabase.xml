@@ -1,5 +1,13 @@
 <HyperlinkTranslationDb>
   <TransElem>
+    <enUri>https://en.wikipedia.org/?title=Milky_Way</enUri>
+    <deUri>https://de.wikipedia.org/wiki/Milchstraße</deUri>
+    <Trans>
+      <en>the Milky Way </en>
+      <de>Milchstraße</de>
+    </Trans>
+  </TransElem>
+  <TransElem>
     <enUri>https://en.wikipedia.org/wiki/10_Hygiea</enUri>
     <deUri>https://de.wikipedia.org/wiki/(10)_Hygiea</deUri>
     <Trans>
@@ -1362,10 +1370,6 @@
       <en>Milky Way</en>
       <de>Milchstraße</de>
     </Trans>
-    <Trans>
-      <en>the Milky Way </en>
-      <de>die Milchstraße</de>
-    </Trans>
   </TransElem>
   <TransElem>
     <enUri>https://en.wikipedia.org/wiki/Milky_Way#Halo</enUri>
@@ -1407,6 +1411,10 @@
     <enUri>https://en.wikipedia.org/wiki/Nebula</enUri>
     <deUri>https://de.wikipedia.org/wiki/Nebel_(Astronomie)</deUri>
     <Trans>
+      <en>nebula</en>
+      <de>Nebel</de>
+	</Trans>
+	<Trans>
       <en>nebulae</en>
       <de>Nebel</de>
     </Trans>

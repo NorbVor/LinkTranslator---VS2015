@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="48"
+   height="48"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.2 r9819"
+   sodipodi:docname="LinkTranslatorIcon-48.svg"
+   inkscape:export-filename="D:\CSharpDev\LinkTranslator - VS2015\LinkTranslatorIcon-48.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
+  <defs
+     id="defs4">
+    <filter
+       id="filter3805"
+       inkscape:label="Specular light"
+       inkscape:menu="ABCs"
+       inkscape:menu-tooltip="Basic specular bevel to use for building textures"
+       color-interpolation-filters="sRGB">
+      <feGaussianBlur
+         id="feGaussianBlur3807"
+         result="result0"
+         in="SourceAlpha"
+         stdDeviation="6" />
+      <feSpecularLighting
+         id="feSpecularLighting3809"
+         specularExponent="25"
+         specularConstant="1"
+         surfaceScale="10"
+         lighting-color="#ffffff"
+         result="result1"
+         in="result0">
+        <feDistantLight
+           id="feDistantLight3811"
+           azimuth="235"
+           elevation="45" />
+      </feSpecularLighting>
+      <feComposite
+         id="feComposite3813"
+         in2="result1"
+         k3="1"
+         k2="1"
+         operator="arithmetic"
+         result="result4"
+         in="SourceGraphic"
+         k1="0"
+         k4="0" />
+      <feComposite
+         id="feComposite3815"
+         in2="SourceAlpha"
+         operator="in"
+         result="result2"
+         in="result4" />
+    </filter>
+    <filter
+       id="filter3865"
+       inkscape:label="Specular light"
+       inkscape:menu="ABCs"
+       inkscape:menu-tooltip="Basic specular bevel to use for building textures"
+       color-interpolation-filters="sRGB">
+      <feGaussianBlur
+         id="feGaussianBlur3867"
+         result="result0"
+         in="SourceAlpha"
+         stdDeviation="6" />
+      <feSpecularLighting
+         id="feSpecularLighting3869"
+         specularExponent="25"
+         specularConstant="1"
+         surfaceScale="10"
+         lighting-color="#ffffff"
+         result="result1"
+         in="result0">
+        <feDistantLight
+           id="feDistantLight3871"
+           azimuth="235"
+           elevation="45" />
+      </feSpecularLighting>
+      <feComposite
+         id="feComposite3873"
+         in2="result1"
+         k3="1"
+         k2="1"
+         operator="arithmetic"
+         result="result4"
+         in="SourceGraphic"
+         k1="0"
+         k4="0" />
+      <feComposite
+         id="feComposite3875"
+         in2="SourceAlpha"
+         operator="in"
+         result="result2"
+         in="result4" />
+    </filter>
+    <filter
+       id="filter4140"
+       inkscape:menu-tooltip="Pressed metal with a rolled edge"
+       inkscape:menu="Bevels"
+       inkscape:label="Pressed steel"
+       color-interpolation-filters="sRGB">
+      <feGaussianBlur
+         id="feGaussianBlur4142"
+         result="result1"
+         stdDeviation="3" />
+      <feBlend
+         id="feBlend4144"
+         in2="result1"
+         result="result5"
+         mode="multiply"
+         in="result1" />
+      <feGaussianBlur
+         id="feGaussianBlur4146"
+         in="result5"
+         result="result6"
+         stdDeviation="1" />
+      <feComposite
+         id="feComposite4148"
+         in2="result5"
+         result="result8"
+         in="result6"
+         operator="xor" />
+      <feComposite
+         id="feComposite4150"
+         in2="result8"
+         in="result6"
+         result="fbSourceGraphic"
+         operator="xor" />
+      <feSpecularLighting
+         id="feSpecularLighting4152"
+         in="fbSourceGraphic"
+         result="result1"
+         lighting-color="#ffffff"
+         surfaceScale="2"
+         specularConstant="2.20000005"
+         specularExponent="55">
+        <fePointLight
+           id="fePointLight4154"
+           x="-5000"
+           y="-10000"
+           z="20000" />
+      </feSpecularLighting>
+      <feComposite
+         id="feComposite4156"
+         in2="fbSourceGraphic"
+         in="result1"
+         result="result2"
+         operator="in" />
+      <feComposite
+         id="feComposite4158"
+         in2="result2"
+         in="fbSourceGraphic"
+         result="result4"
+         operator="arithmetic"
+         k2="2"
+         k3="1"
+         k1="0"
+         k4="0" />
+      <feComposite
+         id="feComposite4160"
+         in2="result4"
+         operator="in"
+         result="result91" />
+      <feBlend
+         id="feBlend4162"
+         in2="result91"
+         mode="darken" />
+    </filter>
+    <filter
+       id="filter4164"
+       inkscape:menu-tooltip="Pressed metal with a rolled edge"
+       inkscape:menu="Bevels"
+       inkscape:label="Pressed steel"
+       color-interpolation-filters="sRGB">
+      <feGaussianBlur
+         id="feGaussianBlur4166"
+         result="result1"
+         stdDeviation="3" />
+      <feBlend
+         id="feBlend4168"
+         in2="result1"
+         result="result5"
+         mode="multiply"
+         in="result1" />
+      <feGaussianBlur
+         id="feGaussianBlur4170"
+         in="result5"
+         result="result6"
+         stdDeviation="1" />
+      <feComposite
+         id="feComposite4172"
+         in2="result5"
+         result="result8"
+         in="result6"
+         operator="xor" />
+      <feComposite
+         id="feComposite4174"
+         in2="result8"
+         in="result6"
+         result="fbSourceGraphic"
+         operator="xor" />
+      <feSpecularLighting
+         id="feSpecularLighting4176"
+         in="fbSourceGraphic"
+         result="result1"
+         lighting-color="#ffffff"
+         surfaceScale="2"
+         specularConstant="2.20000005"
+         specularExponent="55">
+        <fePointLight
+           id="fePointLight4178"
+           x="-5000"
+           y="-10000"
+           z="20000" />
+      </feSpecularLighting>
+      <feComposite
+         id="feComposite4180"
+         in2="fbSourceGraphic"
+         in="result1"
+         result="result2"
+         operator="in" />
+      <feComposite
+         id="feComposite4182"
+         in2="result2"
+         in="fbSourceGraphic"
+         result="result4"
+         operator="arithmetic"
+         k2="2"
+         k3="1"
+         k1="0"
+         k4="0" />
+      <feComposite
+         id="feComposite4184"
+         in2="result4"
+         operator="in"
+         result="result91" />
+      <feBlend
+         id="feBlend4186"
+         in2="result91"
+         mode="darken" />
+    </filter>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="12.615297"
+     inkscape:cx="21.551995"
+     inkscape:cy="18.403363"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     inkscape:window-width="1154"
+     inkscape:window-height="967"
+     inkscape:window-x="405"
+     inkscape:window-y="71"
+     inkscape:window-maximized="0"
+     inkscape:snap-global="false"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0">
+    <inkscape:grid
+       type="xygrid"
+       id="grid2985"
+       empspacing="5"
+       visible="true"
+       enabled="true"
+       snapvisiblegridlinesonly="true" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(5.1520769,-991.57538)">
+    <g
+       id="g3083"
+       transform="matrix(1.0366612,0,0,1.0366612,0.00375002,-37.893983)">
+      <g
+         transform="matrix(0.2677908,-0.20441969,0.20441969,0.2677908,-197.94111,781.41407)"
+         id="g3877">
+        <path
+           style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill:#e3a33d;fill-opacity:1;stroke:none;stroke-width:10;marker:none;visibility:visible;display:inline;overflow:visible;filter:url(#filter3805);enable-background:accumulate;font-family:Sans;-inkscape-font-specification:Sans"
+           d="m 130.15625,912.08093 -25.21875,0.28125 -0.0625,0 c -0.098,-7.5e-4 -7.29544,-0.0398 -14.6875,3.65625 -7.44257,3.72128 -15.25,12.17708 -15.25,26.34375 0,14.16667 7.80743,22.62247 15.25,26.34375 7.44257,3.72128 14.75,3.65625 14.75,3.65625 l 30,0 c 0,0 6.38584,0.044 12.65625,-3.875 6.27041,-3.91901 12.34375,-12.29167 12.34375,-26.125 0,-14.14751 -7.70317,-22.66069 -15.0625,-26.46875 -7.35933,-3.80806 -14.59375,-3.8125 -14.59375,-3.8125 a 5.0005,5.0005 0 0 0 -0.125,0 z m 0,10 c 0,0 0.12121,-1.1e-4 0.125,0 0.19228,0.006 5.09969,0.1831 10,2.71875 4.99695,2.58565 9.65625,6.71 9.65625,17.5625 0,11.16667 -3.92666,15.29401 -7.65625,17.625 -3.72959,2.33099 -7.34375,2.375 -7.34375,2.375 l -30,0 c 0,0 -5.19257,-0.065 -10.25,-2.59375 -5.05743,-2.52872 -9.75,-6.57292 -9.75,-17.40625 0,-10.83333 4.69257,-14.87754 9.75,-17.40625 5.05743,-2.52872 10.25,-2.59375 10.25,-2.59375 a 5.0005,5.0005 0 0 0 0.0625,0 l 25.15625,-0.28125 z"
+           id="path2987-6"
+           inkscape:connector-curvature="0" />
+        <path
+           style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill:#d64b20;fill-opacity:1;stroke:none;stroke-width:10;marker:none;visibility:visible;display:inline;overflow:visible;filter:url(#filter3865);enable-background:accumulate;font-family:Sans;-inkscape-font-specification:Sans"
+           d="m 81.203246,961.66705 c -2.510114,1.41639 -6.421996,0.9764 -6.421996,0.9764 l -30,0 c 0,0 -5.19257,-0.065 -10.25,-2.5938 -5.05743,-2.5287 -9.75,-6.5729 -9.75,-17.40622 0,-10.83333 4.69257,-14.87754 9.75,-17.40625 5.05743,-2.52872 10.25,-2.59375 10.25,-2.59375 0.02083,1.3e-4 0.04167,1.3e-4 0.0625,0 L 70,922.36218 c 0,0 0.12121,-1.1e-4 0.125,0 0.19228,0.006 5.09969,0.1831 10,2.71875 4.99695,2.58565 9.65625,6.71 9.65625,17.5625 0,5.58332 -0.7696,8.82022 -2.224432,12.28562 l 7.40831,5.32487 c 4.123879,-5.45884 4.816122,-14.15217 4.816122,-17.61049 0,-14.14751 -7.70317,-22.66069 -15.0625,-26.46875 -7.35933,-3.80806 -14.59375,-3.8125 -14.59375,-3.8125 -0.04166,-5.2e-4 -0.08334,-5.2e-4 -0.125,0 l -25.21875,0.28125 -0.0625,0 c -0.098,-7.5e-4 -7.295442,-0.0398 -14.6875,3.65625 -7.44257,3.72128 -15.25,12.17708 -15.25,26.34375 0,14.16662 7.80743,22.62242 15.25,26.34372 7.44257,3.7213 14.75,3.6563 14.75,3.6563 l 30,0 c 0,0 9.810807,-0.41981 13.570857,-4.99285"
+           id="path2987-8"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="cccsssccccssccssccccsssccc" />
+      </g>
+      <text
+         transform="matrix(0.23349107,0,0,0.23349107,-7.7634059,805.76411)"
+         sodipodi:linespacing="125%"
+         id="text3881"
+         y="855.86975"
+         x="17.898706"
+         style="font-size:56px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#be4b1f;fill-opacity:1;stroke:none;filter:url(#filter4140);font-family:Sans;-inkscape-font-specification:Sans Bold"
+         xml:space="preserve"><tspan
+           y="855.86975"
+           x="17.898706"
+           id="tspan3883"
+           sodipodi:role="line">EN</tspan></text>
+      <text
+         transform="matrix(0.23094068,0,0,0.23094068,-7.7967293,801.68508)"
+         sodipodi:linespacing="125%"
+         id="text3881-2"
+         y="1022.1304"
+         x="123.92133"
+         style="font-size:56px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#d8a324;fill-opacity:1;stroke:none;filter:url(#filter4164);font-family:Sans;-inkscape-font-specification:Sans Bold"
+         xml:space="preserve"><tspan
+           y="1022.1304"
+           x="123.92133"
+           id="tspan3883-7"
+           sodipodi:role="line">DE</tspan></text>
+    </g>
+  </g>
+</svg>

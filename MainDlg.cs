@@ -470,7 +470,29 @@ namespace LinkTranslator
                 return;
             string fragment = env.GetFragmentString ();
 
+#if true
             // parse the HTML fragment and extract the <A href=...> element
+            HtmlParser hp = new HtmlParser(fragment);
+            HtmlTag tag;
+            while (hp.ParseNext ("a", out tag))
+            {
+                string url = "";
+                if (tag.HasAttribute("href"))
+                    url = tag.Attributes["href"];
+
+                string innerText = hp.ParseInnerText(tag);
+                if (url.Length > 0)
+                {
+                    string text = System.Web.HttpUtility.HtmlDecode(innerText);
+                    Hyperlink hl = new Hyperlink();
+                    hl.uri = url;
+                    hl.text = text;
+
+                    // enter the link into the link list
+                    _enLinks.Add(hl);
+                }
+            }
+#else
             HtmlMiniParser parser = new HtmlMiniParser (fragment);
             while (parser.ReadTag ())
             {
@@ -508,7 +530,7 @@ namespace LinkTranslator
                     }
                 }
             }
-
+#endif
             // tranlate the links
             _lt.TranslateLinks2 (_enLinks, _deLinks);
 
@@ -519,7 +541,6 @@ namespace LinkTranslator
             // cursor back to normal
             Cursor.Current = Cursors.Default;
         }
-
 
         /// <summary>
         /// Returns most recently written File from the specified directory.

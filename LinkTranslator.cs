@@ -578,58 +578,38 @@ namespace LinkTranslator
 
         private bool FindGermanWikiTopicByPageScan (Hyperlink hl, Hyperlink deHL, bool foundUrl = false, bool foundText = false)
         {
-            XmlReaderSettings settings = new XmlReaderSettings ();
-            settings.DtdProcessing = DtdProcessing.Parse;
-            using (XmlReader xmlReader = XmlReader.Create(hl.uri, settings))
+            // download the entire HTML page to search in it for a link to the corresponding German page
+            WebClient client = new WebClient();
+            string html = client.DownloadString(hl.uri);
+
+            // use HtmlParser to find a href tag that follows a h3 tag with id "p-lng-label"
+            HtmlTag tag;
+            HtmlParser parser = new HtmlParser(html);
+            while (parser.ParseNext("h3", out tag))
             {
-                bool langLabelSeen = false;
-                try
+                if (!(tag.Attributes.ContainsKey("id") && tag.Attributes["id"] == "p-lang-label"))
+                    continue;
+                while (parser.ParseNext("a", out tag))
                 {
-                    while (xmlReader.Read())
+                    if (!(tag.Attributes.ContainsKey("lang") && tag.Attributes["lang"] == "de"))
+                        continue;
+                    if (!foundUrl && tag.Attributes.ContainsKey("href"))
                     {
-                        if ((xmlReader.NodeType == XmlNodeType.Element) && (xmlReader.Name == "h3"))
-                        {
-                            if (xmlReader.GetAttribute("id") == "p-lang-label")
-                                langLabelSeen = true;
-                        }
-
-                        if (langLabelSeen && (xmlReader.NodeType == XmlNodeType.Element) && (xmlReader.Name == "a"))
-                        {
-                            if (xmlReader.GetAttribute("lang") == "de")
-                            {
-                                if (!foundUrl)
-                                {
-                                    deHL.uri = xmlReader.GetAttribute("href");
-                                    deHL.uri = Uri.UnescapeDataString(deHL.uri);
-                                    deHL.transMethodUrl = "wikipage";
-                                }
-
-                                if (!foundText)
-                                {
-                                    string title = xmlReader.GetAttribute("title");
-                                    if (title != null)
-                                    {
-                                        char dash = title[title.Length - 8];
-                                        int idx = title.LastIndexOf(" \u2013 German");
-                                        if (idx > 0)
-                                            title = title.Substring(0, idx);
-                                        deHL.text = title;
-                                        deHL.transMethodText = "wikipage";
-                                        deHL.transStatus = Hyperlink.TranslationStatus.partial;
-                                    }
-                                }
-                                // if we added the text translation from the wikidata we regard the translation as partial
-                                deHL.transStatus = foundText ? Hyperlink.TranslationStatus.full :
-                                    Hyperlink.TranslationStatus.partial;
-                                return true;
-                            }
-                        }
+                        deHL.uri = Uri.UnescapeDataString(tag.Attributes["href"]);
+                        deHL.transMethodUrl = "wikipage";
                     }
-                }
-                catch (XmlException excp)
-                {
-                    string msg = excp.Message;
-                    MessageBox.Show($"Exception message:\n{msg}", "Exception while reading topic page", MessageBoxButtons.OK);
+                    if (!foundText && tag.Attributes.ContainsKey("title"))
+                    {
+                        string titleText = tag.Attributes["title"];
+                        char dash = titleText[titleText.Length - 8];
+                        int idx = titleText.LastIndexOf(" \u2013 German");
+                        if (idx > 0)
+                            titleText = titleText.Substring(0, idx);
+                        deHL.text = titleText;
+                        deHL.transMethodText = "wikipage";
+                        deHL.transStatus = Hyperlink.TranslationStatus.partial;
+                    }
+                    return true;
                 }
             }
             return false;

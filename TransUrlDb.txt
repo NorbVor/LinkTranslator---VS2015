@@ -1,0 +1,7 @@
+﻿$(enWiki)James_Dunlop;$(deWiki)James_Dunlop_(Astronom)
+$(enWiki)Milky_Way#Halo;$(deWiki)Milchstraße#Galaktischer_Halo
+$(enWiki)Spiral_galaxy#Galactic_bulge;$(deWiki)Spiralgalaxie#Bulge
+$(enWiki)Tide#Range_variation:_springs_and_neaps;$(deWiki)Gezeiten#Mittelzeitige_Effekte:_etwa_½_Monat_und_½_Jahr
+$(enWiki)Diffraction-limited_system;$(enWiki)Diffraction-limited_system
+$(enWiki)Large_Magellanic_Cloud;$(deWiki)Magellansche_Wolken
+$(enWiki)Small_Magellanic_Cloud;$(deWiki)Magellansche_Wolken
